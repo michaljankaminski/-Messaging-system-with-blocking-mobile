@@ -25,10 +25,10 @@ class ReceivedMessageHolder(itemView: View) : CommonMessageHolder(itemView) {
     }
 
     override fun bind(message: Message) {
-        messageText.text = message.message
+        messageText.text = message.content
 
         // Format the stored timestamp into a readable String using method.
         timeText.text = message.createdAt!!.format(DateTimeFormatter.ISO_LOCAL_TIME)
-        nameText.text = message.sender?.nickname
+        nameText.text = "Static sender"
     }
 }

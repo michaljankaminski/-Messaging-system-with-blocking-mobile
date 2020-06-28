@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.messagingapp.db.UserDb
+import com.example.messagingapp.models.Settings
 import com.google.android.material.snackbar.Snackbar
 import me.liuwj.ktorm.database.Database
 import me.liuwj.ktorm.dsl.*
@@ -58,6 +59,11 @@ class LoginActivity : AppCompatActivity() {
             .where { (UserDb.login eq loginStr) and (UserDb.password eq passwordStr) }
 
         if (query.totalRecords > 0) {
+            for (row in query){
+                var id = row[UserDb.id]
+                Settings.setSettings(id!!)
+            }
+
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }

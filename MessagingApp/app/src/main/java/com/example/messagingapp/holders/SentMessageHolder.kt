@@ -19,7 +19,7 @@ class SentMessageHolder(itemView: View) : CommonMessageHolder(itemView) {
     }
 
     override fun bind(message: Message) {
-        messageText.text = message.message
+        messageText.text = message.content
         timeText.text = message.createdAt!!.format(DateTimeFormatter.ISO_LOCAL_TIME)
     }
 }

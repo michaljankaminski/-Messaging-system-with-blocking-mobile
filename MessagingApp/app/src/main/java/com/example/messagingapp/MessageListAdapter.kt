@@ -9,6 +9,7 @@ import com.example.messagingapp.holders.CommonMessageHolder
 import com.example.messagingapp.holders.ReceivedMessageHolder
 import com.example.messagingapp.holders.SentMessageHolder
 import com.example.messagingapp.models.Message
+import com.example.messagingapp.models.Settings
 
 class MessageListAdapter(context: Context, messageList: MutableList<Message>) : RecyclerView.Adapter<CommonMessageHolder>() {
     private val VIEW_TYPE_MESSAGE_SENT = 1
@@ -36,9 +37,9 @@ class MessageListAdapter(context: Context, messageList: MutableList<Message>) : 
     }
 
     override fun getItemViewType(position: Int): Int {
-        var currentUser = 1
+        var currentUser = Settings.userId
         val message: Message = mMessageList!![position]
-        return if (message.sender!!.userId == currentUser) {
+        return if (message.sender == currentUser) {
             // If the current user is the sender of the message
             VIEW_TYPE_MESSAGE_SENT
         }

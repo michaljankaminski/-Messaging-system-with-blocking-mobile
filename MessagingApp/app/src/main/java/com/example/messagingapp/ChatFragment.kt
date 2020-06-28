@@ -1,6 +1,5 @@
 package com.example.messagingapp
 
-import android.R.attr.password
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,9 +10,11 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.messagingapp.models.Message
-import com.example.messagingapp.models.User
-import com.rabbitmq.client.Connection
-import com.rabbitmq.client.ConnectionFactory
+import com.example.messagingapp.models.Settings
+import com.example.messagingapp.rabbit.RabbitOperations
+import com.example.messagingapp.rabbit.RabbitService
+import com.rabbitmq.client.DeliverCallback
+import com.rabbitmq.client.Delivery
 import java.time.LocalDateTime
 
 
@@ -21,7 +22,8 @@ class ChatFragment : Fragment() {
     private lateinit var mEditText: EditText
     private lateinit var mMessageRecycler: RecyclerView
     private lateinit var mMessageAdapter: MessageListAdapter
-    private var id: Int? = 1
+    private var rabbitOperations: RabbitOperations = RabbitOperations()
+    private var recieverId: Int? = 2
     private val mMessageList: MutableList<Message> = mutableListOf()
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -32,45 +34,45 @@ class ChatFragment : Fragment() {
         mEditText = view.findViewById(R.id.edittext_chatbox)
         initRecyclerView()
 
-        mMessageRecycler.setOnClickListener { view ->
-            receive(view)
-        }
+        val deliverCallback =
+            DeliverCallback { consumerTag: String?, delivery: Delivery ->
+                val message = String(delivery.body)
+                println(" [x] Received '$message'")
+                var msg = Message(message)
+                receive(msg)
+            }
+        rabbitOperations.listen(RabbitService.getService(),deliverCallback)
 
         view.findViewById<Button>(R.id.button_chatbox_send).setOnClickListener { view ->
             send(view)
         }
-        id = 0
+
         return view
     }
 
     private fun send(view: View){
-        var msg = Message()
-        var text = mEditText.text.toString()
-        msg.message = text
-        msg.sender = User()
-        msg.sender!!.userId = id
-        msg.createdAt = LocalDateTime.now()
+        var msg = Message(
+            Settings.userId!!,
+            recieverId!!,
+            mEditText.text.toString(),
+            LocalDateTime.now())
 
+        rabbitOperations.sendMessage(RabbitService.getService(), msg)
         mMessageList.add(msg)
-        RabbitService()
+
         mMessageAdapter.notifyDataSetChanged()
+
         mEditText.text.clear()
     }
 
-    private fun receive(view: View){
-        var msg = Message()
+    private fun receive(message: Message){
 
         var text = mEditText.text.toString()
+        mMessageList.add(message)
 
-        msg.message = text
-        msg.sender = User()
-        msg.createdAt = LocalDateTime.now()
-
-        mMessageList.add(msg)
-
-        mMessageAdapter.notifyDataSetChanged()
-        mEditText.text.clear()
-
+        this.activity!!.runOnUiThread(Runnable {
+            mMessageAdapter.notifyDataSetChanged()
+        })
     }
 
     private fun initRecyclerView() {
