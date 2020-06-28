@@ -57,7 +57,7 @@ class LoginActivity : AppCompatActivity() {
     fun login(view: View){
         var loginStr = findViewById<TextView>(R.id.username).text.toString()
         var passwordStr = findViewById<TextView>(R.id.password).text.toString()
-        
+
         val query = database!!
             .from(UserDb)
             .select()

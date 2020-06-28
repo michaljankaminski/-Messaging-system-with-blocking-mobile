@@ -7,9 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.messagingapp.db.BanDb
 import com.example.messagingapp.db.MessageDb
 import com.example.messagingapp.db.ThreadDb
 import com.example.messagingapp.db.UserDb
@@ -31,6 +33,7 @@ class ChatFragment : Fragment() {
     private lateinit var mMessageAdapter: MessageListAdapter
     private var rabbitOperations: RabbitOperations = RabbitOperations()
     private var recieverId: Int? = 0
+    private var isBlocked: Boolean = false
     private val mMessageList: MutableList<Message> = mutableListOf()
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -40,6 +43,7 @@ class ChatFragment : Fragment() {
         mMessageRecycler = view.findViewById(R.id.reyclerview_message_list)
         mEditText = view.findViewById(R.id.edittext_chatbox)
         recieverId = arguments?.getInt("rec")
+        isBlocked = isBlocked()
         getArchieved()
         initRecyclerView()
         val deliverCallback =
@@ -53,6 +57,10 @@ class ChatFragment : Fragment() {
 
         view.findViewById<Button>(R.id.button_chatbox_send).setOnClickListener { view ->
             send(view)
+        }
+
+        view.findViewById<Button>(R.id.button_block).setOnClickListener { view ->
+            block()
         }
 
         return view
@@ -127,6 +135,38 @@ class ChatFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun block() {
+        var database = DbConnection.getConnection()
+        database!!.insert(BanDb) {
+            it.id to Settings.userId
+            it.ban_user_id to recieverId
+        }
+    }
+
+    private fun unblock() {
+        var database = DbConnection.getConnection()
+        database!!.delete(BanDb) {
+            (it.id eq Settings.userId!!) and
+                    (it.ban_user_id eq recieverId!!)
+        }
+
+    }
+
+    private fun isBlocked(): Boolean{
+        var database = DbConnection.getConnection()
+        val query = database!!
+            .from(BanDb)
+            .select()
+            .where { (BanDb.id eq Settings.userId!!) and ( BanDb.ban_user_id eq recieverId!!)}
+
+        if (query.totalRecords > 0)
+        {
+            return true
+        }
+
+        return false
     }
 
     private fun initRecyclerView() {
