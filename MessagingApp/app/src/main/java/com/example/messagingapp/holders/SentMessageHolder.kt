@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.TextView
 import com.example.messagingapp.models.Message
 import kotlinx.android.synthetic.main.item_message_sent.view.*
+import java.time.format.DateTimeFormatter
 
 
 class SentMessageHolder(itemView: View) : CommonMessageHolder(itemView) {
@@ -19,6 +20,6 @@ class SentMessageHolder(itemView: View) : CommonMessageHolder(itemView) {
 
     override fun bind(message: Message) {
         messageText.text = message.message
-        timeText.text = DateUtils.formatDateTime(itemView.context,message.createdAt,DateUtils.FORMAT_SHOW_TIME)
+        timeText.text = message.createdAt!!.format(DateTimeFormatter.ISO_LOCAL_TIME)
     }
 }

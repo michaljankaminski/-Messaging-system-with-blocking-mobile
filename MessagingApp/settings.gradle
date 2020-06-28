@@ -1,2 +1,4 @@
+include ':postgresql-9.4.1212'
+include ':postgresql-42.2.14'
 include ':app'
 rootProject.name = "MessagingApp"

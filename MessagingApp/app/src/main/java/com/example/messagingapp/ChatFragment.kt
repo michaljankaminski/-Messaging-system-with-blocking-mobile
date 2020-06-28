@@ -1,5 +1,6 @@
 package com.example.messagingapp
 
+import android.R.attr.password
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.messagingapp.models.Message
 import com.example.messagingapp.models.User
+import com.rabbitmq.client.Connection
+import com.rabbitmq.client.ConnectionFactory
+import java.time.LocalDateTime
+
 
 class ChatFragment : Fragment() {
     private lateinit var mEditText: EditText
@@ -44,13 +49,12 @@ class ChatFragment : Fragment() {
         msg.message = text
         msg.sender = User()
         msg.sender!!.userId = id
-        msg.createdAt = 1593031920
+        msg.createdAt = LocalDateTime.now()
 
-        id = 1
         mMessageList.add(msg)
+        RabbitService()
         mMessageAdapter.notifyDataSetChanged()
         mEditText.text.clear()
-
     }
 
     private fun receive(view: View){
@@ -60,9 +64,10 @@ class ChatFragment : Fragment() {
 
         msg.message = text
         msg.sender = User()
-        msg.createdAt = 1593031920
+        msg.createdAt = LocalDateTime.now()
 
         mMessageList.add(msg)
+
         mMessageAdapter.notifyDataSetChanged()
         mEditText.text.clear()
 

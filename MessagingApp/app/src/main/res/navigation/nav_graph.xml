@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/FirstFragment"
-        android:name="com.example.messagingapp.ContactsFragment"
+        android:name="com.example.messagingapp.ThreadsFragment"
         android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_contacts">
+        tools:layout="@layout/fragment_threads">
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"

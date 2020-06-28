@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ContactsFragment">
+    tools:context=".ThreadsFragment">
 
     <Button
         android:id="@+id/button_first"
@@ -17,10 +17,12 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/reyclerview_thread_list"
         android:layout_width="409dp"
         android:layout_height="681dp"
         android:layout_marginBottom="1dp"
         app:layout_constraintBottom_toTopOf="@+id/button_first"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="1dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

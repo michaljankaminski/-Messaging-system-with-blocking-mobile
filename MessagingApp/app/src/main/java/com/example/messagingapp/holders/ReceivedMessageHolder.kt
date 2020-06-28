@@ -6,6 +6,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.example.messagingapp.models.Message
 import kotlinx.android.synthetic.main.item_message_received.view.*
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 class ReceivedMessageHolder(itemView: View) : CommonMessageHolder(itemView) {
@@ -23,13 +25,10 @@ class ReceivedMessageHolder(itemView: View) : CommonMessageHolder(itemView) {
     }
 
     override fun bind(message: Message) {
-        messageText.setText(message.message)
+        messageText.text = message.message
 
         // Format the stored timestamp into a readable String using method.
-        timeText.setText(DateUtils.formatDateTime(itemView.context,message.createdAt, DateUtils.FORMAT_SHOW_TIME))
-        nameText.setText(message.sender?.nickname)
-
-        // Insert the profile image from the URL into the ImageView.
-        //Utils.displayRoundImageFromUrl(mContext, message.getSender().getProfileUrl(), profileImage)
+        timeText.text = message.createdAt!!.format(DateTimeFormatter.ISO_LOCAL_TIME)
+        nameText.text = message.sender?.nickname
     }
 }

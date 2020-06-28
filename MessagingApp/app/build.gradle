@@ -30,9 +30,16 @@ android {
         jvmTarget = '1.8'
     }
 
+    dexOptions {
+        preDexLibraries false
+    }
+
 }
 
 dependencies {
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation "com.rabbitmq:amqp-client:5.9.0"
+    implementation "me.liuwj.ktorm:ktorm-support-postgresql:3.0.0"
     implementation "me.liuwj.ktorm:ktorm-core:3.0.0"
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -45,6 +52,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+    implementation project(path: ':postgresql-9.4.1212')
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
