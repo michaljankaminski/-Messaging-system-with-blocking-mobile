@@ -1,11 +1,13 @@
 package com.example.messagingapp.db
 
 import me.liuwj.ktorm.schema.Table
+import me.liuwj.ktorm.schema.date
 import me.liuwj.ktorm.schema.int
-import me.liuwj.ktorm.schema.varchar
 
-object Thread : Table<Nothing>("thread") {
+object ThreadDb : Table<Nothing>("thread") {
     val id = int("id").primaryKey()
-    val name = varchar("name")
-    val location = varchar("location")
+    val id_sender = int("id_sender")
+    val id_reciever = int("id_reciever")
+    val created = date("created")
+    val modified = date("modified")
 }
