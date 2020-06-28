@@ -34,5 +34,5 @@ class MessageJson(senderId: Int, receiverId: Int, contentMsg: String, created: L
     var sender: Int = senderId
     var receiver: Int = receiverId
     var content: String = contentMsg
-    var createdAt: String = created.toString()
+    var created: String = created.toString()
 }
