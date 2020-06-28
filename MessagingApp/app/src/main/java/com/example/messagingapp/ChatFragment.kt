@@ -1,6 +1,7 @@
 package com.example.messagingapp
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +24,7 @@ class ChatFragment : Fragment() {
     private lateinit var mMessageRecycler: RecyclerView
     private lateinit var mMessageAdapter: MessageListAdapter
     private var rabbitOperations: RabbitOperations = RabbitOperations()
-    private var recieverId: Int? = 2
+    private var recieverId: Int? = 0
     private val mMessageList: MutableList<Message> = mutableListOf()
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -33,6 +34,7 @@ class ChatFragment : Fragment() {
         mMessageRecycler = view.findViewById(R.id.reyclerview_message_list)
         mEditText = view.findViewById(R.id.edittext_chatbox)
         initRecyclerView()
+        recieverId = arguments?.getInt("rec")
 
         val deliverCallback =
             DeliverCallback { consumerTag: String?, delivery: Delivery ->
@@ -73,6 +75,11 @@ class ChatFragment : Fragment() {
         this.activity!!.runOnUiThread(Runnable {
             mMessageAdapter.notifyDataSetChanged()
         })
+    }
+
+    private fun getArchieved() {
+        var database = DbConnection.getConnection()
+        data
     }
 
     private fun initRecyclerView() {

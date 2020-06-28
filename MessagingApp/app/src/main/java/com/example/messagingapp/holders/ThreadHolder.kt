@@ -2,6 +2,9 @@ package com.example.messagingapp.holders
 
 import android.view.View
 import android.widget.TextView
+import androidx.core.os.bundleOf
+import androidx.navigation.Navigation
+import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.messagingapp.R
@@ -18,8 +21,8 @@ class ThreadHolder (view: View) : RecyclerView.ViewHolder(view) {
 
     fun bind(thread: Thread) {
         threadText.text = thread.login
-        threadText.setOnClickListener {
-            //findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-        }
+        this.itemView.setOnClickListener(
+            Navigation.createNavigateOnClickListener(R.id.action_FirstFragment_to_SecondFragment,bundleOf("rec" to thread.userId))
+        )
     }
 }
