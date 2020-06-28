@@ -20,6 +20,7 @@ import com.example.messagingapp.models.Settings
 import com.example.messagingapp.models.Thread
 import com.example.messagingapp.rabbit.RabbitOperations
 import com.example.messagingapp.rabbit.RabbitService
+import com.google.android.material.snackbar.Snackbar
 import com.rabbitmq.client.DeliverCallback
 import com.rabbitmq.client.Delivery
 import me.liuwj.ktorm.dsl.*
@@ -29,6 +30,7 @@ import java.time.format.DateTimeFormatter
 
 class ChatFragment : Fragment() {
     private lateinit var mEditText: EditText
+    private lateinit var mButtonBlock: Button
     private lateinit var mMessageRecycler: RecyclerView
     private lateinit var mMessageAdapter: MessageListAdapter
     private var rabbitOperations: RabbitOperations = RabbitOperations()
@@ -44,7 +46,11 @@ class ChatFragment : Fragment() {
         mEditText = view.findViewById(R.id.edittext_chatbox)
         recieverId = arguments?.getInt("rec")
         isBlocked = isBlocked()
-        getArchieved()
+        if (!isBlocked)
+        {
+            getArchieved()
+
+        }
         initRecyclerView()
         val deliverCallback =
             DeliverCallback { consumerTag: String?, delivery: Delivery ->
@@ -53,15 +59,38 @@ class ChatFragment : Fragment() {
                 var msg = Message(message)
                 receive(msg)
             }
-        rabbitOperations.listen(RabbitService.getService(),deliverCallback)
+        if (!isBlocked){
+            rabbitOperations.listen(RabbitService.getService(),deliverCallback)
+        }
 
         view.findViewById<Button>(R.id.button_chatbox_send).setOnClickListener { view ->
-            send(view)
+            if (isBlocked) {
+                Snackbar.make(view, "The user is blocked", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
+            }
+            else{
+                send(view)
+            }
+        }
+        mButtonBlock = view.findViewById<Button>(R.id.button_block)
+
+        if (!isBlocked){
+            mButtonBlock.text = "Block"
+        }
+        else{
+            mButtonBlock.text = "Unblock"
         }
 
         view.findViewById<Button>(R.id.button_block).setOnClickListener { view ->
-            block()
-        }
+            if (!isBlocked){
+                block()
+                mButtonBlock.text = "Unblock"
+            }
+            else{
+                unblock()
+                mButtonBlock.text = "Block"
+            }
+    }
 
         return view
     }
@@ -143,6 +172,8 @@ class ChatFragment : Fragment() {
             it.id to Settings.userId
             it.ban_user_id to recieverId
         }
+
+        isBlocked = true
     }
 
     private fun unblock() {
@@ -152,6 +183,7 @@ class ChatFragment : Fragment() {
                     (it.ban_user_id eq recieverId!!)
         }
 
+        isBlocked = false
     }
 
     private fun isBlocked(): Boolean{

@@ -73,7 +73,7 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
         else{
-            Snackbar.make(view, "Login failarino", Snackbar.LENGTH_LONG)
+            Snackbar.make(view, "Login failed", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
     }
