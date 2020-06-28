@@ -17,7 +17,7 @@ class ThreadHolder (view: View) : RecyclerView.ViewHolder(view) {
     }
 
     fun bind(thread: Thread) {
-        threadText.text = thread.userId.toString()
+        threadText.text = thread.login
         threadText.setOnClickListener {
             //findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
