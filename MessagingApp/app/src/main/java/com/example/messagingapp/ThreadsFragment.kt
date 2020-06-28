@@ -25,6 +25,7 @@ class ThreadsFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         val view =  inflater.inflate(R.layout.fragment_threads, container, false)
+        mThreadList.clear()
         val th = Thread()
         getContacts()
         mThreadRecycler = view.findViewById(R.id.reyclerview_thread_list)

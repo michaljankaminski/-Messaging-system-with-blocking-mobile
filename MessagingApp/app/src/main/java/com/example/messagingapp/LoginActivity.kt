@@ -14,6 +14,11 @@ import com.example.messagingapp.models.Settings
 import com.google.android.material.snackbar.Snackbar
 import me.liuwj.ktorm.database.Database
 import me.liuwj.ktorm.dsl.*
+import android.util.Base64
+import android.util.Log
+import com.google.common.hash.Hashing
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
 
 class LoginActivity : AppCompatActivity() {
     var database: Database? = null
@@ -52,11 +57,11 @@ class LoginActivity : AppCompatActivity() {
     fun login(view: View){
         var loginStr = findViewById<TextView>(R.id.username).text.toString()
         var passwordStr = findViewById<TextView>(R.id.password).text.toString()
-
+        
         val query = database!!
             .from(UserDb)
             .select()
-            .where { (UserDb.login eq loginStr) and (UserDb.password eq passwordStr) }
+            .where { (UserDb.login eq loginStr) and (UserDb.password eq hashString(passwordStr).toLowerCase()) }
 
         if (query.totalRecords > 0) {
             for (row in query){
@@ -71,5 +76,11 @@ class LoginActivity : AppCompatActivity() {
             Snackbar.make(view, "Login failarino", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
+    }
+
+    private fun hashString(input: String): String    {
+        return MessageDigest.getInstance("sha256")
+            .digest(input.toByteArray())
+            .fold("", { str, it -> str + "%02x".format(it) })
     }
 }

@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.example.messagingapp.models.Message
+import com.example.messagingapp.models.Settings
 import kotlinx.android.synthetic.main.item_message_received.view.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -28,7 +29,12 @@ class ReceivedMessageHolder(itemView: View) : CommonMessageHolder(itemView) {
         messageText.text = message.content
 
         // Format the stored timestamp into a readable String using method.
-        timeText.text = message.createdAt!!.format(DateTimeFormatter.ISO_LOCAL_TIME)
-        nameText.text = "Static sender"
+        timeText.text = message.createdAt!!.format(DateTimeFormatter.ofPattern("HH:mm"))
+        for ( th in Settings.threads!!){
+            if (th.userId == message.sender)
+            {
+                nameText.text = th.login
+            }
+        }
     }
 }
