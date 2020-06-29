@@ -19,10 +19,10 @@ class Message {
 
     constructor(json: String){
         val jsonObject = JsonParser().parse(json).asJsonObject
-        sender = jsonObject["sender"].asInt
-        receiver = jsonObject["receiver"].asInt
-        content = jsonObject["content"].asString
-        createdAt = LocalDateTime.parse(jsonObject["createdAt"].asString)
+        sender = jsonObject["Sender"].asInt
+        receiver = jsonObject["Receiver"].asInt
+        content = jsonObject["Content"].asString
+        createdAt = LocalDateTime.now()//.parse(jsonObject["Created"].asString)
     }
 
     fun toJsonClass() : MessageJson{
@@ -31,8 +31,8 @@ class Message {
 }
 
 class MessageJson(senderId: Int, receiverId: Int, contentMsg: String, created: LocalDateTime ){
-    var sender: Int = senderId
-    var receiver: Int = receiverId
-    var content: String = contentMsg
-    var created: String = created.toString()
+    var Sender: Int = senderId
+    var Receiver: Int = receiverId
+    var Content: String = contentMsg
+    var Created: String = created.toString()
 }

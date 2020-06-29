@@ -46,18 +46,17 @@ class ChatFragment : Fragment() {
         mEditText = view.findViewById(R.id.edittext_chatbox)
         recieverId = arguments?.getInt("rec")
         isBlocked = isBlocked()
-        if (!isBlocked)
-        {
-            getArchieved()
-
-        }
+        getArchieved()
         initRecyclerView()
         val deliverCallback =
             DeliverCallback { consumerTag: String?, delivery: Delivery ->
                 val message = String(delivery.body)
                 println(" [x] Received '$message'")
                 var msg = Message(message)
-                receive(msg)
+                if (msg.sender == recieverId){
+                    receive(msg)
+                }
+
             }
         if (!isBlocked){
             rabbitOperations.listen(RabbitService.getService(),deliverCallback)
@@ -102,21 +101,22 @@ class ChatFragment : Fragment() {
             mEditText.text.toString(),
             LocalDateTime.now())
 
-        rabbitOperations.sendMessage(RabbitService.getService(), msg)
+        if (!isBeingBlocked()){
+            rabbitOperations.sendMessage(RabbitService.getService(), msg)
+
+        }
+
         mMessageList.add(msg)
-
         mMessageAdapter.notifyDataSetChanged()
-
         mEditText.text.clear()
     }
 
     private fun receive(message: Message){
 
-        var text = mEditText.text.toString()
-        mMessageList.add(message)
-
         this.activity!!.runOnUiThread(Runnable {
+            mMessageList.add(message)
             mMessageAdapter.notifyDataSetChanged()
+            initRecyclerView()
         })
     }
 
@@ -192,6 +192,21 @@ class ChatFragment : Fragment() {
             .from(BanDb)
             .select()
             .where { (BanDb.id eq Settings.userId!!) and ( BanDb.ban_user_id eq recieverId!!)}
+
+        if (query.totalRecords > 0)
+        {
+            return true
+        }
+
+        return false
+    }
+
+    private fun isBeingBlocked(): Boolean{
+        var database = DbConnection.getConnection()
+        val query = database!!
+            .from(BanDb)
+            .select()
+            .where { (BanDb.id eq recieverId!!) and ( BanDb.ban_user_id eq Settings.userId!!)}
 
         if (query.totalRecords > 0)
         {

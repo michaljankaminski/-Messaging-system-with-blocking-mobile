@@ -12,7 +12,8 @@ import java.util.*
 
 class RabbitOperations {
     fun sendMessage(service: RabbitService, message: Message){
-        var messageByte = Gson().toJson( message.toJsonClass()).toByteArray()
+        var w = message.toJsonClass()
+        var messageByte = Gson().toJson( w).toByteArray()
 
         service.channel.basicPublish(
             "users",
@@ -30,14 +31,16 @@ class RabbitOperations {
 
         service.channel.basicConsume(service.responseQueue, true, DeliverCallback
         {
-                consumerTag: String?, delivery: Delivery ->
-                val message = String(delivery.body)
-                println(" [x] Response '$message'")
+            consumerTag: String?, delivery: Delivery ->
+            val message = String(delivery.body)
+            println(" [x] Response '$message'")
         }, CancelCallback {  })
     }
 
     fun listen(service: RabbitService, deliverCallback: DeliverCallback) {
         val queueName = "user-" + Settings.userId.toString()
-        service.channel.basicConsume(queueName, true, deliverCallback, CancelCallback {  })
+        service.channel.basicConsume(queueName, true, deliverCallback, CancelCallback { consumerTag ->
+            println(" [x] Problem ")
+          })
     }
 }
